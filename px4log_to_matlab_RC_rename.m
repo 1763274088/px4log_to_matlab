@@ -1,25 +1,26 @@
 clc;
-clear all;
 close all;
-
-
-%% --------- Read .px4log and convert to .csv file then load to Matlab ---------------
-% log_file = '151221.Small_Size_Fixed_Wing_1.px4log';
-% log_file = '160107.Small_Size_Fixed_Wing_1.px4log';
-log_file = '161219.LPE_with_VICION.px4log';
-
-% log_file = '08_48_28.px4log';
-
-log_file_name = strsplit(log_file,'.');
-data_file = strcat(log_file_name{1},'.csv');
-delim = ',';
-time_field = 'TIME';
-csv_null = '';
-
-if not(exist(data_file, 'file'))
-    s = system( sprintf('python sdlog2_dump.py "%s" -f "%s" -t"%s" -d"%s" -n"%s"', log_file, data_file, time_field, delim, csv_null) );    
-end
-sysvector = tdfread(data_file, ',');
+% clear all;
+% close all;
+% 
+% 
+% %% --------- Read .px4log and convert to .csv file then load to Matlab ---------------
+% % log_file = '151221.Small_Size_Fixed_Wing_1.px4log';
+% % log_file = '160107.Small_Size_Fixed_Wing_1.px4log';
+% log_file = '161219.LPE_with_VICION.px4log';
+% 
+% % log_file = '08_48_28.px4log';
+% 
+% log_file_name = strsplit(log_file,'.');
+% data_file = strcat(log_file_name{1},'.csv');
+% delim = ',';
+% time_field = 'TIME';
+% csv_null = '';
+% 
+% if not(exist(data_file, 'file'))
+%     s = system( sprintf('python sdlog2_dump.py "%s" -f "%s" -t"%s" -d"%s" -n"%s"', log_file, data_file, time_field, delim, csv_null) );    
+% end
+% sysvector = tdfread(data_file, ',');
 
 %% --------- Convert the GPS time from "ms" to "s"
 fconv_timestamp=1E-6; % [microseconds] to [seconds]
@@ -38,9 +39,9 @@ timePosCtl = time(statePosCtl);
 pxPosCtl = [timePosCtl', fliplr(timePosCtl')];
 
 %% ------- Convert GPS Lat/Lon/Alt to X/Y/Z --------
-lat = sysvector.GPS_Lat;
-lon = sysvector.GPS_Lon;
-h = sysvector.GPS_Alt;
+lat = sysvector.GPOS_Lat;
+lon = sysvector.GPOS_Lon;
+h = sysvector.GPOS_Alt;
 wgs84 = wgs84Ellipsoid('meters');
 [x,y,z] = geodetic2ecef(wgs84,lat,lon,h);
 
@@ -48,7 +49,7 @@ wgs84 = wgs84Ellipsoid('meters');
 %% ---------- Draw converted GPS 3D Position ---------
 fig(1) = figure(1)
 subplot(2, 4, [1 2 5 6]);
-% [x,y,z]=lla2ecef(sysvector.GPS_Lat, sysvector.GPS_Lon, sysvector.GPS_Alt);
+% [x,y,z]=lla2ecef(sysvector.GPOS_Lat, sysvector.GPOS_Lon, sysvector.GPOS_Alt);
 
 
 
@@ -131,18 +132,18 @@ fig(2) = figure(2);
 figNum = 9;
 figIndex = 1;
 subplot(figNum, 3, [figIndex figIndex+1 figIndex+2]);
-shadingPeriod = find(sysvector.RC_Ch5 > -0.5);
+shadingPeriod = find(sysvector.RC_C5 > -0.5);
 
 hold on;
-[ax h1 h2]=plotyy(time, sysvector.RC_Ch5, time,sysvector.STAT_MainState);
+[ax h1 h2]=plotyy(time, sysvector.RC_C5, time,sysvector.STAT_MainState);
 legend('Chanel 5','State');
 xlabel('Time(s)');
 ylim(ax(2),[-1,2]);
 grid on;
 hold on;
 
-yAxisMax = max(max([sysvector.RC_Ch5, sysvector.STAT_MainState])) * 1.15;
-yAxisMin = min(min([sysvector.RC_Ch5, sysvector.STAT_MainState])) * 1.15;
+yAxisMax = max(max([sysvector.RC_C5, sysvector.STAT_MainState])) * 1.15;
+yAxisMin = min(min([sysvector.RC_C5, sysvector.STAT_MainState])) * 1.15;
 
 pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -313,27 +314,27 @@ alpha(.15);
 
 
 %% ---------- GPS fix/EPH/EPV -----------
-figIndex = figIndex + 3;
-subplot(figNum, 3, [figIndex figIndex+1 figIndex+2]);
-
-
-plot(time, [sysvector.GPS_EPH, sysvector.GPS_EPV, sysvector.GPS_Fix],'LineWidth',1.5);
-legend('GPS.EPH','GPS.EPV','GPS.Fix');
-xlabel('Time(s)');
-grid on;
-hold on;
-
-yAxisMax = max(max([sysvector.GPS_EPH, sysvector.GPS_EPV, sysvector.GPS_Fix])) * 1.15;
-yAxisMin = min(min([sysvector.GPS_EPH, sysvector.GPS_EPV, sysvector.GPS_Fix])) * 0.85;
-
-pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
-patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
-
-pyPosCtl = [ones(size(timePosCtl'))*yAxisMin, ones(size(timePosCtl'))*yAxisMax];
-patch(pxPosCtl, pyPosCtl, 'g','EdgeColor','none');
-
-ylim([yAxisMin, yAxisMax]);
-alpha(.15);
+% figIndex = figIndex + 3;
+% subplot(figNum, 3, [figIndex figIndex+1 figIndex+2]);
+% 
+% 
+% plot(time, [sysvector.GPOS_EPH, sysvector.GPOS_EPV, sysvector.GPOS_Fix],'LineWidth',1.5);
+% legend('GPS.EPH','GPS.EPV','GPS.Fix');
+% xlabel('Time(s)');
+% grid on;
+% hold on;
+% 
+% yAxisMax = max(max([sysvector.GPOS_EPH, sysvector.GPOS_EPV, sysvector.GPOS_Fix])) * 1.15;
+% yAxisMin = min(min([sysvector.GPOS_EPH, sysvector.GPOS_EPV, sysvector.GPOS_Fix])) * 0.85;
+% 
+% pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
+% patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
+% 
+% pyPosCtl = [ones(size(timePosCtl'))*yAxisMin, ones(size(timePosCtl'))*yAxisMax];
+% patch(pxPosCtl, pyPosCtl, 'g','EdgeColor','none');
+% 
+% ylim([yAxisMin, yAxisMax]);
+% alpha(.15);
 
 %% ----- IMU 1 -------
 fig(3) = figure(3);
@@ -363,14 +364,14 @@ alpha(.15);
 figIndex = figIndex + 3;
 subplot(figNum, 3, [figIndex figIndex+1 figIndex+2]);
 
-plot(time, [sysvector.IMU1_GyroX, sysvector.IMU1_GyroY, sysvector.IMU1_GyroZ],'LineWidth',1.5);
+plot(time, [sysvector.IMU_GyroX, sysvector.IMU_GyroY, sysvector.IMU_GyroZ],'LineWidth',1.5);
 legend('IMU.GyroX','IMU.GyroY','IMU.GyroZ');
 xlabel('Time(s)');
 grid on;
 hold on;
 
-yAxisMax = max(max([sysvector.IMU1_GyroX, sysvector.IMU1_GyroY, sysvector.IMU1_GyroZ])) * 1.15;
-yAxisMin = min(min([sysvector.IMU1_GyroX, sysvector.IMU1_GyroY, sysvector.IMU1_GyroZ])) * 1.15;
+yAxisMax = max(max([sysvector.IMU_GyroX, sysvector.IMU_GyroY, sysvector.IMU_GyroZ])) * 1.15;
+yAxisMin = min(min([sysvector.IMU_GyroX, sysvector.IMU_GyroY, sysvector.IMU_GyroZ])) * 1.15;
 
 pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -385,5 +386,57 @@ figSaveName = strcat(log_file_name{1},'.fig');
 savefig(fig, figSaveName);
 
 
+
+
+figure(12); 
+subplot(2,1,1);
+plot(time, [sysvector.RC_C1, sysvector.RC_C2, sysvector.RC_C3, sysvector.RC_C4],'LineWidth',1.5);
+legend('RC1', 'RC2', 'RC3', 'RC4');
+axis([min(time) max(time) -2 2]);
+grid on;
+
+subplot(2,1,2);
+plot(time, [sysvector.RC_C5, sysvector.RC_C6, sysvector.RC_C7, sysvector.RC_C8],'LineWidth',1.5);
+legend('RC5', 'RC6', 'RC7', 'RC8');
+axis([min(time) max(time) -2 2]);
+grid on;
+
+figure(13);
+[hAx,hLine1,hLine2] = plotyy(time, sysvector.RC_C8, time, sysvector.LPSP_X);
+hold on;
+hLine1.LineWidth = 1.5;
+hLine2.LineWidth = 1.5;
+hLine1.Marker = 'o';
+hLine2.Marker = 'o';
+pl1 = plot(time, sysvector.LPOS_X,'or','LineWidth',1.5);
+grid on;
+axis([min(time) max(time) -2 2]);
+legend([hLine1,hLine2, pl1], {'RC_8', 'LPSP_X','LPOS_X'});
+
+
+figure(14);
+[hAx,hLine1,hLine2] = plotyy(time, sysvector.RC_C8, time, sysvector.LPSP_Y);
+hold on;
+hLine1.LineWidth = 1.5;
+hLine2.LineWidth = 1.5;
+hLine1.Marker = 'o';
+hLine2.Marker = 'o';
+pl1 = plot(time, sysvector.LPOS_Y,'or','LineWidth',1.5);
+grid on;
+axis([min(time) max(time) -2 2]);
+legend([hLine1,hLine2, pl1], {'RC_8', 'LPSP_Y','LPOS_Y'});
+
+
+figure(15);
+[hAx,hLine1,hLine2] = plotyy(time, sysvector.RC_C8, time, sysvector.LPSP_Z);
+hold on;
+hLine1.LineWidth = 1.5;
+hLine2.LineWidth = 1.5;
+hLine1.Marker = 'o';
+hLine2.Marker = 'o';
+pl1 = plot(time, sysvector.LPOS_Z,'or','LineWidth',1.5);
+grid on;
+axis([min(time) max(time) -2 2]);
+legend([hLine1,hLine2, pl1], {'RC_8', 'LPSP_Z','LPOS_Z'});
 
 
