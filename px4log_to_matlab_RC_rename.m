@@ -1,26 +1,31 @@
 clc;
 close all;
-% clear all;
-% close all;
+clear all;
+close all;
 % 
 % 
 % %% --------- Read .px4log and convert to .csv file then load to Matlab ---------------
 % % log_file = '151221.Small_Size_Fixed_Wing_1.px4log';
 % % log_file = '160107.Small_Size_Fixed_Wing_1.px4log';
 % log_file = '161219.LPE_with_VICION.px4log';
+log_file = '161222.UAV_2_Circle.px4log';
+
 % 
 % % log_file = '08_48_28.px4log';
 % 
-% log_file_name = strsplit(log_file,'.');
-% data_file = strcat(log_file_name{1},'.csv');
-% delim = ',';
-% time_field = 'TIME';
-% csv_null = '';
-% 
-% if not(exist(data_file, 'file'))
-%     s = system( sprintf('python sdlog2_dump.py "%s" -f "%s" -t"%s" -d"%s" -n"%s"', log_file, data_file, time_field, delim, csv_null) );    
-% end
-% sysvector = tdfread(data_file, ',');
+log_file_name = strsplit(log_file,'.');
+data_file = strcat(log_file_name{1},'.csv');
+delim = ',';
+time_field = 'TIME';
+csv_null = '';
+
+if not(exist(data_file, 'file'))
+    s = system( sprintf('python sdlog2_dump.py "%s" -f "%s" -t"%s" -d"%s" -n"%s"', log_file, data_file, time_field, delim, csv_null) );        
+    sysvector = tdfread(data_file, ',');
+    save(strcat(log_file_name{1}, '.', log_file_name{2},'.mat'), 'sysvector');
+end
+sysvector = load(strcat(log_file_name{1}, '.', log_file_name{2},'.mat'));
+sysvector = sysvector.sysvector;
 
 %% --------- Convert the GPS time from "ms" to "s"
 fconv_timestamp=1E-6; % [microseconds] to [seconds]
@@ -127,23 +132,26 @@ hold on;
 
 
 %% RC Chanel 5 & Main State
-fig(2) = figure(2);
-
+fig = figure(2);
+p = get(fig,'position');
+p(3) = p(3)*1.8;
+p(4) = p(4)*2.0; % Add 10 percent to height
+set(fig, 'position', p);
 figNum = 9;
 figIndex = 1;
 subplot(figNum, 3, [figIndex figIndex+1 figIndex+2]);
-shadingPeriod = find(sysvector.RC_C5 > -0.5);
+shadingPeriod = find(sysvector.RC_C8 > -0.5);
 
 hold on;
-[ax h1 h2]=plotyy(time, sysvector.RC_C5, time,sysvector.STAT_MainState);
-legend('Chanel 5','State');
+[ax h1 h2]=plotyy(time, sysvector.RC_C8, time,sysvector.STAT_MainState);
+legend('Chanel 8','State');
 xlabel('Time(s)');
 ylim(ax(2),[-1,2]);
 grid on;
 hold on;
 
-yAxisMax = max(max([sysvector.RC_C5, sysvector.STAT_MainState])) * 1.15;
-yAxisMin = min(min([sysvector.RC_C5, sysvector.STAT_MainState])) * 1.15;
+yAxisMax = max(max([sysvector.RC_C8, sysvector.STAT_MainState])) * 1.15;
+yAxisMin = min(min([sysvector.RC_C8, sysvector.STAT_MainState])) * 1.15;
 
 pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -337,8 +345,13 @@ alpha(.15);
 % alpha(.15);
 
 %% ----- IMU 1 -------
-fig(3) = figure(3);
-figNum = 2;
+fig  = figure(3);
+p = get(fig,'position');
+p(3) = p(3)*1.8;
+p(4) = p(4)*1.0; % Add 10 percent to height
+set(fig, 'position', p);
+
+figNum = 3;
 figIndex = 1;
 subplot(figNum, 3, [figIndex figIndex+1 figIndex+2]);
 
@@ -370,6 +383,7 @@ xlabel('Time(s)');
 grid on;
 hold on;
 
+
 yAxisMax = max(max([sysvector.IMU_GyroX, sysvector.IMU_GyroY, sysvector.IMU_GyroZ])) * 1.15;
 yAxisMin = min(min([sysvector.IMU_GyroX, sysvector.IMU_GyroY, sysvector.IMU_GyroZ])) * 1.15;
 
@@ -385,10 +399,37 @@ alpha(.15);
 figSaveName = strcat(log_file_name{1},'.fig');
 savefig(fig, figSaveName);
 
+figIndex = figIndex + 3;
+subplot(figNum, 3, [figIndex figIndex+1 figIndex+2]);
 
+plot(time, [sysvector.IMU_MagX, sysvector.IMU_MagY, sysvector.IMU_MagZ],'LineWidth',1.5);
 
+xlabel('Time(s)');
+grid on;
+hold on;
 
-figure(12); 
+IMU_MagNorm = sqrt(sysvector.IMU_MagX.^2 + sysvector.IMU_MagY.^2 + sysvector.IMU_MagZ.^2);
+plot(time, IMU_MagNorm,'LineWidth',1.5);
+legend('IMU.MagX','IMU.MagY','IMU.MagZ','IMU.MagNorm');
+yAxisMax = max(max([sysvector.IMU_MagX, sysvector.IMU_MagY, sysvector.IMU_MagZ])) * 1.15;
+yAxisMin = min(min([sysvector.IMU_MagX, sysvector.IMU_MagY, sysvector.IMU_MagZ])) * 1.15;
+
+% pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
+% patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
+% 
+% pyPosCtl = [ones(size(timePosCtl'))*yAxisMin, ones(size(timePosCtl'))*yAxisMax];
+% patch(pxPosCtl, pyPosCtl, 'g','EdgeColor','none');
+
+% ylim([yAxisMin, yAxisMax]);
+% alpha(.15);
+
+%%
+fig = figure(12); 
+p = get(fig,'position');
+p(3) = p(3)*1.8;
+p(4) = p(4)*1.0; % Add 10 percent to height
+set(fig, 'position', p);
+
 subplot(2,1,1);
 plot(time, [sysvector.RC_C1, sysvector.RC_C2, sysvector.RC_C3, sysvector.RC_C4],'LineWidth',1.5);
 legend('RC1', 'RC2', 'RC3', 'RC4');
@@ -401,42 +442,68 @@ legend('RC5', 'RC6', 'RC7', 'RC8');
 axis([min(time) max(time) -2 2]);
 grid on;
 
-figure(13);
-[hAx,hLine1,hLine2] = plotyy(time, sysvector.RC_C8, time, sysvector.LPSP_X);
+%%
+fig = figure(13);
+p = get(fig,'position');
+p(3) = p(3)*1.8;
+p(4) = p(4)*1.0; % Add 10 percent to height
+set(fig, 'position', p);
+
+[hAx,hLine1,hLine2] = plotyy(time, sysvector.LPSP_X, time, sysvector.RC_C8);
 hold on;
 hLine1.LineWidth = 1.5;
 hLine2.LineWidth = 1.5;
 hLine1.Marker = 'o';
-hLine2.Marker = 'o';
-pl1 = plot(time, sysvector.LPOS_X,'or','LineWidth',1.5);
+% hLine2.Marker = 'o';
+pl1 = plot(time, sysvector.LPOS_X,'o-r','LineWidth',1.5,'Color',[0.4940    0.1840    0.5560]);
+
+yAxisMax = max(max([sysvector.LPOS_Z, sysvector.LPSP_Z])) * 1.15;
+yAxisMin = min(min([sysvector.LPOS_Z, sysvector.LPSP_Z])) * 1.15;
+set(hAx(1),'YLim',[yAxisMin yAxisMax])
+set(hAx(2),'YLim',[-2 2])
 grid on;
-axis([min(time) max(time) -2 2]);
-legend([hLine1,hLine2, pl1], {'RC_8', 'LPSP_X','LPOS_X'});
+legend([hLine1, pl1,hLine2], { 'LPSP_Z','LPOS_Z','RC 8'});
 
-
-figure(14);
-[hAx,hLine1,hLine2] = plotyy(time, sysvector.RC_C8, time, sysvector.LPSP_Y);
+%%
+fig = figure(14);
+p = get(fig,'position');
+p(3) = p(3)*1.8;
+p(4) = p(4)*1.0; % Add 10 percent to height
+set(fig, 'position', p);
+[hAx,hLine1,hLine2] = plotyy(time, sysvector.LPSP_Y, time, sysvector.RC_C8);
 hold on;
 hLine1.LineWidth = 1.5;
 hLine2.LineWidth = 1.5;
 hLine1.Marker = 'o';
-hLine2.Marker = 'o';
-pl1 = plot(time, sysvector.LPOS_Y,'or','LineWidth',1.5);
+% hLine2.Marker = 'o';
+pl1 = plot(time, sysvector.LPOS_Y,'o-r','LineWidth',1.5,'Color',[0.4940    0.1840    0.5560]);
+
+yAxisMax = max(max([sysvector.LPOS_Y, sysvector.LPSP_Y])) * 1.15;
+yAxisMin = min(min([sysvector.LPOS_Y, sysvector.LPSP_Y])) * 1.15;
+set(hAx(1),'YLim',[yAxisMin yAxisMax])
+set(hAx(2),'YLim',[-2 2])
 grid on;
-axis([min(time) max(time) -2 2]);
-legend([hLine1,hLine2, pl1], {'RC_8', 'LPSP_Y','LPOS_Y'});
+legend([hLine1, pl1,hLine2], { 'LPSP_Y','LPOS_Y','RC 8'});
 
-
-figure(15);
-[hAx,hLine1,hLine2] = plotyy(time, sysvector.RC_C8, time, sysvector.LPSP_Z);
+%%
+fig = figure(15);
+p = get(fig,'position');
+p(3) = p(3)*1.8;
+p(4) = p(4)*1.0; % Add 10 percent to height
+set(fig, 'position', p);
+[hAx,hLine1,hLine2] = plotyy(time, sysvector.LPSP_Z, time, sysvector.RC_C8);
 hold on;
 hLine1.LineWidth = 1.5;
 hLine2.LineWidth = 1.5;
 hLine1.Marker = 'o';
-hLine2.Marker = 'o';
-pl1 = plot(time, sysvector.LPOS_Z,'or','LineWidth',1.5);
+% hLine2.Marker = '-';
+pl1 = plot(time, sysvector.LPOS_Z,'o-','LineWidth',1.5,'Color',[0.4940    0.1840    0.5560]);
+
+yAxisMax = max(max([sysvector.LPOS_Z, sysvector.LPSP_Z])) * 1.15;
+yAxisMin = min(min([sysvector.LPOS_Z, sysvector.LPSP_Z])) * 1.15;
+set(hAx(1),'YLim',[yAxisMin yAxisMax])
+set(hAx(2),'YLim',[-2 2])
 grid on;
-axis([min(time) max(time) -2 2]);
-legend([hLine1,hLine2, pl1], {'RC_8', 'LPSP_Z','LPOS_Z'});
+legend([hLine1, pl1,hLine2], { 'LPSP_Z','LPOS_Z','RC 8'});
 
 
