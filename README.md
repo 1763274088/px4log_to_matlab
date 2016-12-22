@@ -18,11 +18,13 @@ The file `px4log_to_matlab_RC_rename.m` is for analysing PX4 log file, while `px
 ### Notes
 - Need Python support. 
   The following code runs the `sdlog_dumpy` to trasnfer the PX4 log file to csv file. 
+
   ```
   s = system( sprintf('python sdlog2_dump.py "%s" -f "%s" -t"%s" -d"%s" -n"%s"', log_file, data_file, time_field, delim, csv_null) );       
   ```
 - `sysvector = tdfread(data_file, ',');` will cost some time to read the csv data into Matlab workspace.
 - We save the `sysvector` data to `***.mat` file.
+
   ```
   sysvector = load(strcat(log_file_name{1}, '.', log_file_name{2},'.mat'));
   ```
