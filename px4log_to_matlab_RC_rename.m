@@ -1,14 +1,14 @@
 clc;
 close all;
 clear all;
-close all;
+ 
 % 
 % 
 % %% --------- Read .px4log and convert to .csv file then load to Matlab ---------------
 % % log_file = '151221.Small_Size_Fixed_Wing_1.px4log';
 % % log_file = '160107.Small_Size_Fixed_Wing_1.px4log';
-% log_file = '161219.LPE_with_VICION.px4log';
-log_file = '161222.UAV_2_Circle.px4log';
+log_file = '161219.LPE_with_VICION.px4log';
+% log_file = '161222.UAV_2_Circle.px4log';
 
 % 
 % % log_file = '08_48_28.px4log';
@@ -505,7 +505,7 @@ yAxisMin = yAxisMin  -  yAxisScale*0.2;
 set(hAx(1),'yLim',[yAxisMin yAxisMax],'YTick', yAxisMin:yAxisMax);
 set(hAx(2),'YLim',[-2 2])
 grid on;
-legend([hLine1, pl1,hLine2], { 'LPSP_Z','LPOS_Z','RC 8'});
+legend([hLine1, pl1,hLine2], { 'LPSP_X','LPOS_X','RC 8'});
 
 %%
 fig = figure(14);
