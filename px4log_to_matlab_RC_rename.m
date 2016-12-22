@@ -52,7 +52,7 @@ wgs84 = wgs84Ellipsoid('meters');
 
 
 %% ---------- Draw converted GPS 3D Position ---------
-fig(1) = figure(1)
+fig(1) = figure(1);
 subplot(2, 4, [1 2 5 6]);
 % [x,y,z]=lla2ecef(sysvector.GPOS_Lat, sysvector.GPOS_Lon, sysvector.GPOS_Alt);
 
@@ -150,8 +150,12 @@ ylim(ax(2),[-1,2]);
 grid on;
 hold on;
 
-yAxisMax = max(max([sysvector.RC_C8, sysvector.STAT_MainState])) * 1.15;
-yAxisMin = min(min([sysvector.RC_C8, sysvector.STAT_MainState])) * 1.15;
+yAxisMax = max(max([sysvector.RC_C8, sysvector.STAT_MainState]));
+yAxisMin = min(min([sysvector.RC_C8, sysvector.STAT_MainState]));
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
+
 
 pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -174,8 +178,12 @@ xlabel('Time(s)');
 grid on;
 hold on;
 
-yAxisMax = max(max([sysvector.ATT_Roll, sysvector.ATT_Pitch])) * 1.15;
-yAxisMin = min(min([sysvector.ATT_Roll, sysvector.ATT_Pitch])) * 1.15;
+yAxisMax = max(max([sysvector.ATT_Roll, sysvector.ATT_Pitch]));
+yAxisMin = min(min([sysvector.ATT_Roll, sysvector.ATT_Pitch]));
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
+
 
 pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -197,8 +205,11 @@ xlabel('Time(s)');
 grid on;
 hold on;
 
-yAxisMax = max(max([sysvector.LPOS_X, sysvector.LPSP_X])) * 1.15;
-yAxisMin = min(min([sysvector.LPOS_X, sysvector.LPSP_X])) * 1.15;
+yAxisMax = max(max([sysvector.LPOS_X, sysvector.LPSP_X]));
+yAxisMin = min(min([sysvector.LPOS_X, sysvector.LPSP_X]));
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
 
 pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -219,8 +230,11 @@ xlabel('Time(s)');
 grid on;
 hold on;
 
-yAxisMax = max(max([sysvector.LPOS_Y, sysvector.LPSP_Y])) * 1.15;
-yAxisMin = min(min([sysvector.LPOS_Y, sysvector.LPSP_Y])) * 1.15;
+yAxisMax = max(max([sysvector.LPOS_Y, sysvector.LPSP_Y]));
+yAxisMin = min(min([sysvector.LPOS_Y, sysvector.LPSP_Y]));
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
 
 pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -241,8 +255,12 @@ xlabel('Time(s)');
 grid on;
 hold on;
 
-yAxisMax = max(max([sysvector.LPOS_Z, sysvector.LPSP_Z])) * 1.15;
-yAxisMin = min(min([sysvector.LPOS_Z, sysvector.LPSP_Z])) * 1.15;
+yAxisMax = max(max([sysvector.LPOS_Z, sysvector.LPSP_Z]));
+yAxisMin = min(min([sysvector.LPOS_Z, sysvector.LPSP_Z]));
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
+
 
 pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -263,8 +281,12 @@ xlabel('Time(s)');
 grid on;
 hold on;
 
-yAxisMax = max(max([sysvector.IMU_AccX, sysvector.IMU_AccY, sysvector.IMU_AccZ])) * 1.15;
-yAxisMin = min(min([sysvector.IMU_AccX, sysvector.IMU_AccY, sysvector.IMU_AccZ])) * 1.15;
+yAxisMax = max(max([sysvector.IMU_AccX, sysvector.IMU_AccY, sysvector.IMU_AccZ]));
+yAxisMin = min(min([sysvector.IMU_AccX, sysvector.IMU_AccY, sysvector.IMU_AccZ]));
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
+
 
 pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -285,8 +307,12 @@ xlabel('Time(s)');
 grid on;
 hold on;
 
-yAxisMax = max(max([sysvector.IMU_GyroX, sysvector.IMU_GyroY, sysvector.IMU_GyroZ])) * 1.15;
-yAxisMin = min(min([sysvector.IMU_GyroX, sysvector.IMU_GyroY, sysvector.IMU_GyroZ])) * 1.15;
+yAxisMax = max(max([sysvector.IMU_GyroX, sysvector.IMU_GyroY, sysvector.IMU_GyroZ]));
+yAxisMin = min(min([sysvector.IMU_GyroX, sysvector.IMU_GyroY, sysvector.IMU_GyroZ]));
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
+
 
 pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -307,8 +333,11 @@ xlabel('Time(s)');
 grid on;
 hold on;
 
-yAxisMax = max(max([sysvector.IMU_MagX, sysvector.IMU_MagY, sysvector.IMU_MagZ])) * 1.15;
-yAxisMin = min(min([sysvector.IMU_MagX, sysvector.IMU_MagY, sysvector.IMU_MagZ])) * 1.15;
+yAxisMax = max(max([sysvector.IMU_MagX, sysvector.IMU_MagY, sysvector.IMU_MagZ]));
+yAxisMin = min(min([sysvector.IMU_MagX, sysvector.IMU_MagY, sysvector.IMU_MagZ]));
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
 
 pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -361,8 +390,12 @@ xlabel('Time(s)');
 grid on;
 hold on;
 
-yAxisMax = max(max([sysvector.IMU_AccX, sysvector.IMU_AccY, sysvector.IMU_AccZ])) * 1.15;
-yAxisMin = min(min([sysvector.IMU_AccX, sysvector.IMU_AccY, sysvector.IMU_AccZ])) * 1.15;
+yAxisMax = max(max([sysvector.IMU_AccX, sysvector.IMU_AccY, sysvector.IMU_AccZ]));
+yAxisMin = min(min([sysvector.IMU_AccX, sysvector.IMU_AccY, sysvector.IMU_AccZ]));
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
+
 
 pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -384,8 +417,12 @@ grid on;
 hold on;
 
 
-yAxisMax = max(max([sysvector.IMU_GyroX, sysvector.IMU_GyroY, sysvector.IMU_GyroZ])) * 1.15;
-yAxisMin = min(min([sysvector.IMU_GyroX, sysvector.IMU_GyroY, sysvector.IMU_GyroZ])) * 1.15;
+yAxisMax = max(max([sysvector.IMU_GyroX, sysvector.IMU_GyroY, sysvector.IMU_GyroZ]));
+yAxisMin = min(min([sysvector.IMU_GyroX, sysvector.IMU_GyroY, sysvector.IMU_GyroZ]));
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
+
 
 pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -411,8 +448,11 @@ hold on;
 IMU_MagNorm = sqrt(sysvector.IMU_MagX.^2 + sysvector.IMU_MagY.^2 + sysvector.IMU_MagZ.^2);
 plot(time, IMU_MagNorm,'LineWidth',1.5);
 legend('IMU.MagX','IMU.MagY','IMU.MagZ','IMU.MagNorm');
-yAxisMax = max(max([sysvector.IMU_MagX, sysvector.IMU_MagY, sysvector.IMU_MagZ])) * 1.15;
-yAxisMin = min(min([sysvector.IMU_MagX, sysvector.IMU_MagY, sysvector.IMU_MagZ])) * 1.15;
+yAxisMax = max(max([sysvector.IMU_MagX, sysvector.IMU_MagY, sysvector.IMU_MagZ, IMU_MagNorm]));
+yAxisMin = min(min([sysvector.IMU_MagX, sysvector.IMU_MagY, sysvector.IMU_MagZ, IMU_MagNorm]));
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
 
 % pyAltCtl = [ones(size(timeAltCtl'))*yAxisMin, ones(size(timeAltCtl'))*yAxisMax];
 % patch(pxAltCtl, pyAltCtl, 'k','EdgeColor','none');
@@ -457,9 +497,12 @@ hLine1.Marker = 'o';
 % hLine2.Marker = 'o';
 pl1 = plot(time, sysvector.LPOS_X,'o-r','LineWidth',1.5,'Color',[0.4940    0.1840    0.5560]);
 
-yAxisMax = max(max([sysvector.LPOS_Z, sysvector.LPSP_Z])) * 1.15;
-yAxisMin = min(min([sysvector.LPOS_Z, sysvector.LPSP_Z])) * 1.15;
-set(hAx(1),'YLim',[yAxisMin yAxisMax])
+yAxisMax = max(max([sysvector.LPOS_Z, sysvector.LPSP_Z]));
+yAxisMin = min(min([sysvector.LPOS_Z, sysvector.LPSP_Z])) ;
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
+set(hAx(1),'yLim',[yAxisMin yAxisMax],'YTick', yAxisMin:yAxisMax);
 set(hAx(2),'YLim',[-2 2])
 grid on;
 legend([hLine1, pl1,hLine2], { 'LPSP_Z','LPOS_Z','RC 8'});
@@ -470,18 +513,23 @@ p = get(fig,'position');
 p(3) = p(3)*1.8;
 p(4) = p(4)*1.0; % Add 10 percent to height
 set(fig, 'position', p);
+pl1 = plot(time, sysvector.LPOS_Y,'o-r','LineWidth',1.5,'Color',[0.4940    0.1840    0.5560]);
+hold on;
 [hAx,hLine1,hLine2] = plotyy(time, sysvector.LPSP_Y, time, sysvector.RC_C8);
 hold on;
 hLine1.LineWidth = 1.5;
 hLine2.LineWidth = 1.5;
 hLine1.Marker = 'o';
 % hLine2.Marker = 'o';
-pl1 = plot(time, sysvector.LPOS_Y,'o-r','LineWidth',1.5,'Color',[0.4940    0.1840    0.5560]);
 
-yAxisMax = max(max([sysvector.LPOS_Y, sysvector.LPSP_Y])) * 1.15;
-yAxisMin = min(min([sysvector.LPOS_Y, sysvector.LPSP_Y])) * 1.15;
-set(hAx(1),'YLim',[yAxisMin yAxisMax])
+yAxisMax = max(max([sysvector.LPOS_Y, sysvector.LPSP_Y]));
+yAxisMin = min(min([sysvector.LPOS_Y, sysvector.LPSP_Y]));
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
 set(hAx(2),'YLim',[-2 2])
+set(hAx(1),'yLim',[yAxisMin yAxisMax],'YTick', yAxisMin:yAxisMax);
+
 grid on;
 legend([hLine1, pl1,hLine2], { 'LPSP_Y','LPOS_Y','RC 8'});
 
@@ -499,9 +547,12 @@ hLine1.Marker = 'o';
 % hLine2.Marker = '-';
 pl1 = plot(time, sysvector.LPOS_Z,'o-','LineWidth',1.5,'Color',[0.4940    0.1840    0.5560]);
 
-yAxisMax = max(max([sysvector.LPOS_Z, sysvector.LPSP_Z])) * 1.15;
-yAxisMin = min(min([sysvector.LPOS_Z, sysvector.LPSP_Z])) * 1.15;
-set(hAx(1),'YLim',[yAxisMin yAxisMax])
+yAxisMax = max(max([sysvector.LPOS_Z, sysvector.LPSP_Z]));
+yAxisMin = min(min([sysvector.LPOS_Z, sysvector.LPSP_Z]));
+yAxisScale = yAxisMax - yAxisMin;
+yAxisMax = yAxisMax  +  yAxisScale*0.2;
+yAxisMin = yAxisMin  -  yAxisScale*0.2;
+set(hAx(1),'yLim',[yAxisMin yAxisMax],'YTick', yAxisMin:yAxisMax);
 set(hAx(2),'YLim',[-2 2])
 grid on;
 legend([hLine1, pl1,hLine2], { 'LPSP_Z','LPOS_Z','RC 8'});
